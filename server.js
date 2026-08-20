@@ -13,7 +13,19 @@ function save(){const tmp=DB_FILE+'.tmp';fs.writeFileSync(tmp,JSON.stringify(db,
 function id(type){return db.next[type]++}
 app.use(express.json({limit:'1mb'}));
 app.use(express.urlencoded({extended:true}));
-app.use(session({secret:process.env.SESSION_SECRET||'CHANGE_THIS_SECRET_IN_PRODUCTION',resave:false,saveUninitialized:false,cookie:{httpOnly:true,sameSite:'lax',secure:process.env.NODE_ENV==='production',maxAge:8*60*60*1000}}));
+app.set("trust proxy", 1);
+
+app.use(session({
+  secret: process.env.SESSION_SECRET || "CHANGE_THIS_SECRET_IN_PRODUCTION",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: true,
+    maxAge: 8 * 60 * 60 * 1000
+  }
+}));
 app.use(express.static(path.join(__dirname,'public')));
 const now=()=>new Date();
 const day=d=>d.toISOString().slice(0,10);
